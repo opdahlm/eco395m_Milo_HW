@@ -1,0 +1,316 @@
+---
+title: 'Data Mining and Statistical Learning: Exercise 1'
+author: "Milo Opdahl"
+date: "February 10, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+```{r, include=FALSE}
+library(tidyverse)
+library(reshape2)
+library(expss)
+
+GB <- read.csv("D:/School Stuff/Graduate School/DMDS/ECO395M/data/greenbuildings.csv", header=TRUE)
+view(GB)
+
+# What were the results the "data guru" found?
+#First, let's establish the subsets.
+LeaseHigh <- GB[GB$leasing_rate > 10,]
+Green <- GB[GB$green_rating==1,]
+NotGreen <- GB[GB$green_rating !=1,]
+median_rent <- median(LeaseHigh$Rent)
+G_rent <- median(Green$Rent) # Median Rent for Green Buildings
+NG_rent <- median(NotGreen$Rent) # Median Rent for Non-Green Buildings
+D_rent <- G_rent-NG_rent #difference in rent from green and non-green
+n <- 30 # Years of Operation
+o_rate <- 0.90 # Occupancy Rate
+sqft <- 250000 # Building Size
+c_cost <- 100000000 # Building Cost
+g_cert <- 0.05 # Green Certification
+
+#Now, replicate the analysis.
+payoff1 <- (c_cost*g_cert)/(D_rent*sqft) #at 100% occupancy
+payoff2 <- (c_cost*g_cert)/(D_rent*sqft*o_rate) #at 90% occupancy
+
+total1 <- (n-payoff1)*D_rent*sqft #total payoff under payoff1
+total2 <- (n-payoff2)*D_rent*sqft*o_rate #total payoff under payoff2
+
+full_rate <- c(100:11)/100 #Occupancy Rate Values >10
+full_payoff <- (c_cost*g_cert)/(D_rent*sqft*full_rate) #Payoff Times based on Occupancy Rates
+
+GB_plot <- data.frame(full_payoff,full_rate)
+
+Guru_Analysis <- ggplot(GB_plot)+
+  geom_point(mapping = aes(x = full_payoff, y = full_rate), color='black')+
+  labs(title="Guru Payoff Analysis",subtitle="30 Year Operational Life",x="Years to Payoff",y="Occupancy Rate")+
+  coord_cartesian(xlim=c(0, 30))+
+  geom_vline(xintercept=7.7, linetype="solid", color = "red")+
+  geom_hline(yintercept=0.25, linetype="dashed", color = "red")+
+  geom_vline(xintercept=30, linetype="solid", color = "red")
+
+```
+
+## "Data Guru" Analysis
+
+
+```{r Guru_Analysis, echo=FALSE}
+Guru_Analysis
+```
+
+  The so-called "Data Guru" likely came to their conclusions similar to the chart above, utilizing certain methods such as a median rent measure of green vs non-green buildings and removing data on low-occupancy buildings under the theory that such information could "potentially distort the analysis."  From this we can see how they came to their conclusions on having a total payoff and breaking even on the investment after about 7.7 years, assuming 100% occupancy rate.  However, their approach has major faults, particularly in two matters.
+  
+* By removing data on low-occupancy buildings, we lose potentially important insight on market conditions for both green and non-green buildings, such as their rental values and knowing what type of buildings are more likely to have lower occupancy rates.
+
+* Utilizing a median rent measure instead of a mean rental valuation of green vs non-green buildings may allow to control for robustness in outliers; however, controlling for robustness in outliers will skew the payoff data that is being gathered, specifically by overestimating the effect of green buildings.  
+
+```{r echo=FALSE}
+table <- matrix(c(
+  median(LeaseHigh$Rent),
+  mean(LeaseHigh$Rent),
+  median(Green$Rent),
+  mean(NotGreen$Rent),
+  median(Green$Rent),
+  mean(NotGreen$Rent)
+),ncol=2,byrow=TRUE)
+
+colnames(table) <- c("Median","Mean")
+rownames(table) <- c("Whole Dataset","Green","Non-Green")
+
+table <- as.table(table)
+table
+```
+
+  The table above shows that there is a 2.6 difference using median-values, while there will only be a 1.7 difference in mean-values.  By using mean-values, the break-even point will be extended further than the "Data Guru" would anticipate.
+  
+## A New Analysis
+
+  By using the full data and mean rent values, a new (and arguably better) understanding of the data can be found.
+```{r New_Analysis, echo=FALSE}
+GB <- read.csv("D:/School Stuff/Graduate School/DMDS/ECO395M/data/greenbuildings.csv", header=TRUE)
+
+#Subsets
+Green <- GB[GB$green_rating==1,]
+NotGreen <- GB[GB$green_rating !=1,]
+mean_rent <- mean(GB$Rent) 
+G_rent <- mean(Green$Rent) # Mean Rent for Green Buildings
+NG_rent <- mean(NotGreen$Rent) # Mean Rent for Non-Green Buildings
+D_rent <- G_rent-NG_rent #difference in rent from green and non-green
+n <- 30 # Years of Operation
+o_rate <- 0.90 # Occupancy Rate
+sqft <- 250000 # Building Size
+c_cost <- 100000000 # Building Cost
+g_cert <- 0.05 # Green Certification
+
+#Analysis
+payoff1 <- (c_cost*g_cert)/(D_rent*sqft) #at 100% occupancy
+payoff2 <- (c_cost*g_cert)/(D_rent*sqft*o_rate) #at 90% occupancy
+
+total1 <- (n-payoff1)*D_rent*sqft #total payoff under payoff1
+total2 <- (n-payoff2)*D_rent*sqft*o_rate #total payoff under payoff2
+
+full_rate <- c(100:1)/100 #Occupancy Rate Values
+full_payoff <- (c_cost*g_cert)/(D_rent*sqft*full_rate) #Payoff Times based on Occupancy Rates
+
+GB_plot <- data.frame(full_payoff,full_rate)
+
+New_Analysis <-ggplot(GB_plot)+
+  geom_point(mapping = aes(x = full_payoff, y = full_rate), color='black')+
+  labs(title="New Payoff Analysis",subtitle="30 Year Operational Life",x="Years to Payoff",y="Occupancy Rate")+
+  coord_cartesian(xlim=c(0, 30))+
+  geom_vline(xintercept=payoff1, linetype="solid", color = "red")+
+  geom_hline(yintercept=0.37, linetype="dashed", color = "red")+
+  geom_vline(xintercept=30, linetype="solid", color = "red")
+New_Analysis
+```
+
+  Here is a more accurate estimate of the payoff timetable for a green building using mean-values. For 100% occupancy, the payoff would take place within 11.43 years. In addition, at the building's estimated minimal lifecycle the payoff would take place given a 37% occupacy rate, with anything lower resulting in a loss.
+  
+\newpage
+
+## Question 2
+
+```{r ABIA, include=FALSE}
+library(plyr)
+library(ggplot2)
+library(tidyverse)
+library(reshape2)
+library(expss)
+
+ABIA = read.csv("D:/School Stuff/Graduate School/DMDS/ECO395M/data/ABIA.csv", header=TRUE)
+View(ABIA)
+
+flight1 <- ABIA[1:4]
+flight2 <- ABIA[9]
+flight3 <- ABIA[19]
+ABIAf <- cbind(flight1, flight2, flight3)
+head(ABIAf)
+
+MilesperMin <- ABIA$Distance / ABIA$ActualElapsedTime
+ABIAf <- cbind(ABIAf, MilesperMin)
+head(ABIAf)
+
+ABIAf <- subset(ABIAf, UniqueCarrier == "AA")
+ABIAf <- subset(ABIAf, !is.na(Distance))
+ABIAf <- subset(ABIAf, !is.na(MilesperMin))
+head(ABIAf)
+
+summary(ABIAf)
+
+ggplot(ABIAf, aes(y=MilesperMin, x=DayOfWeek))+geom_violin()
+
+plot1 <- ggplot(ABIAf, aes(x = DayOfWeek, y = MilesperMin)) + geom_point(aes(color = ABIAf$DayofMonth)) + facet_wrap(~Month)
+
+```  
+# American Airline Flights At ABIA
+
+The following dot plot gives the speed of American Airline flights to and from ABIA per day of the week, in every month of 2008.  By getting to understand this graph, we can figure out what days have the fastest flight times or have the highest density of fast flights.
+
+```{r plot_1,echo=FALSE}
+plot1
+```
+
+\newpage
+  
+## Question 3
+
+```{r load data,include=FALSE}
+library(tidyverse)
+library(FNN)
+
+sclass = read.csv("D:/School Stuff/Graduate School/DMDS/ECO395M/data/sclass.csv", header=TRUE)
+sclass <- select(sclass,trim,mileage,price)
+
+# The variables involved
+
+# plot the data
+#ggplot(data = sclass) + 
+#  geom_point(mapping = aes(x = mileage, y = price), color='darkgrey')
+#summary(sclass)
+
+# Focus on 2 trim levels: 350 and 65 AMG
+sclass350 = subset(sclass, trim == '350')
+
+sclass65AMG = subset(sclass, trim == '65 AMG')
+
+# create a function to automate everything
+
+function_knn <- function(x){
+  # Make a train-test split
+  N = nrow(x)
+  N_train = floor(0.8*N)
+  N_test = N - N_train
+  
+  #####
+  # Train/test split
+  #####
+  
+  # randomly sample a set of data points to include in the training set
+  train_ind = sample.int(N, N_train, replace=FALSE)
+  
+  # Define the training and testing set
+  D_train = x[train_ind,]
+  D_test = x[-train_ind,]
+  
+  # optional book-keeping step:
+  # reorder the rows of the testing set by the mileage
+  D_test = arrange(D_test, mileage)
+  head(D_test)
+  
+  # Now separate the training and testing sets into features (X) and outcome (y)
+  X_train = select(D_train, mileage)
+  y_train = select(D_train, price)
+  X_test = select(D_test, mileage)
+  y_test = select(D_test, price)
+  
+  
+  #####
+  # Fit a few models
+  #####
+  
+  # linear and quadratic models
+  lm1 = lm(price ~ mileage, data=D_train)
+  lm2 = lm(price ~ poly(mileage, 2), data=D_train)
+  
+  # KNN
+  knn = knn.reg(train = X_train, test = X_test, y = y_train, k=knn_size)
+  
+  #####
+  # Compare the models by RMSE_out
+  #####
+  
+  # define a helper function for calculating RMSE
+  rmse = function(y, ypred) {
+    sqrt(mean(data.matrix((y-ypred)^2)))
+  }
+  
+  ypred_lm1 = predict(lm1, X_test)
+  ypred_lm2 = predict(lm2, X_test)
+  ypred_knn = knn$pred
+  
+  rmse(y_test, ypred_lm1)
+  rmse(y_test, ypred_lm2)
+  rmse(y_test, ypred_knn)
+  
+  
+  ####
+  # plot the fit
+  ####
+  
+  # attach the predictions to the test data frame
+  D_test$ypred_lm2 = ypred_lm2
+  D_test$ypred_knn = ypred_knn
+  
+  p_test = ggplot(data = D_test) + 
+    geom_point(mapping = aes(x = mileage, y = price), color='lightgrey') + 
+    theme_bw(base_size=18)
+  p_test
+  
+  p_test + geom_path(aes(x = mileage, y = ypred_knn), color='red')+ 
+    geom_path(aes(x = mileage, y = ypred_lm2), color='blue')+
+    ggtitle(paste("S-Class",trim,"when KNN=",knn_size))
+}
+```
+
+# S-Class 350
+
+```{r plot 1,echo=FALSE}
+trim <- 350
+
+knn_size <- 10
+function_knn(sclass350)
+
+knn_size <- 20
+function_knn(sclass350)
+
+knn_size <- 40
+function_knn(sclass350)
+
+knn_size <- 50
+function_knn(sclass350)
+```
+
+\newpage
+
+# S-Class 65 AMG
+
+```{r plot 2,echo=FALSE}
+trim <- "65 AMG"
+
+knn_size <- 10
+function_knn(sclass65AMG)
+
+knn_size <- 20
+function_knn(sclass65AMG)
+
+knn_size <- 40
+function_knn(sclass65AMG)
+
+knn_size <- 50
+function_knn(sclass65AMG)
+```
