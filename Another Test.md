@@ -16,7 +16,7 @@ output:
 ## "Data Guru" Analysis
 
 
-![plot of chunk Guru_Analysis](figure/Guru_Analysis-1.png)
+![](https://github.com/opdahlm/eco395m_Milo_HW/blob/master/Exercise%201/figure/Guru_Analysis-1.png)
 
   The so-called "Data Guru" likely came to their conclusions similar to the chart above, utilizing certain methods such as a median rent measure of green vs non-green buildings and removing data on low-occupancy buildings under the theory that such information could "potentially distort the analysis."  From this we can see how they came to their conclusions on having a total payoff and breaking even on the investment after about 7.7 years, assuming 100% occupancy rate.  However, their approach has major faults, particularly in two matters.
   
