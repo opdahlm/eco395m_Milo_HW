@@ -28,7 +28,7 @@ plot.new()
 rasterImage(pp1,0,0,1,1)
 ```
 
-# 3.	
+# 3.
   The researchers controlled for METRO ridership as an indicator of how much pedestrian and tourist traffic there is on High-Alert Days.  This was done to observe if the level of "Crime" would still increase when controlling for both "Ridership" and "High-Alert."  In other words, the researchers wanted to know if crime still took place in D.C. on High-Alert Days.
 
 ```{r png2, include=FALSE}
@@ -40,7 +40,7 @@ plot.new()
 rasterImage(pp2,0,0,1,1)
 ```
 
-# 4.	
+# 4.
   The model being estimated in the first data column of Table 4 is the effect on "Crime" by "High-Alert" and some dummy variables that describe the certain police district areas of Washington, D.C.  The "District 1" dummy variable represents the area of D.C. around The National Mall, while "Other Districts" controls for all other districts in D.C.  Again, "Ridership" is used again to represent pedestrian and tourist traffic, while "Constant" simply accounts for all the other variables in the data when the previous variables are fixed at 0.  The purpose of the estimation is to observe how much "High-Alert" affects different "Crime" levels in two separate areas of D.C.  Based on the results, it can be concluded that "High-Alert" affects one district of D.C. more so than the rest of the city, and that the effect of "High-Alert" on "Crime" is not as strong as we previously observed in Table 2.  Specifically: Holding all else constant, the presence of a High-Alert Day in Washington, D.C. results in a 2.621 point decrease in the Total Daily Crime level in "District 1"; in addition, the presence of a High-Alert Day in Washington, D.C. leads to a 0.571 point decrease in the Total Daily Crime level throughout the rest of the city districts.
 
 \newpage
