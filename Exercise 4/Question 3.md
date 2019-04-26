@@ -11,9 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Association Rules for Grocery Purchases
 
-```{r grocery, include=FALSE}
+```{r grocery, include=FALSE, echo=FALSE}
 library(arules)
 library(arulesViz)
+library(knitr)
 
 grocery_raw = read.csv("D:/School Stuff/Graduate School/DMDS/ECO395M/data/groceries.txt", header = FALSE)
 # Trip ID
@@ -60,10 +61,10 @@ inspect(subset(groceryrules, confidence > 0.3))
 
 ```{r groceryrules, echo=FALSE}
 inspect(subset(groceryrules, lift < 1))
+kable(inspect(subset(groceryrules, lift < 1)))
 ```
 
-  The first rule of note is between "shopping bags" and "soda".  With a lift of 0.9020198, these two goods are considered substitutes.  While "shopping bags" and "soda" are certainly not substitutable with one another, this perhaps makes sense when thinking in another approach.  Customers who purchase shopping bags may not want to purchase anything that will be heavy enough to rip the bags; therefore, assuming soda is sold in high quantities i.e. more than a single liter bottle, customers may not want to purchase heavy soda products that could jeopardize the integrity of their shopping bags.  
-  The other relationships in this subset are a little more odd.  With a lift of 0.942117, it appears that "rolls/buns" and "whole milk" are substitute goods.  In addition, with a lift of 0.9826570, "brown bread" and "whole milk" are just barely considered substitute goods.  In truth, this does not make much sense to me since there is little reason these products would be substitutes in the real world.  One possible explanation would be from a food culture standpoint.  Personally, with parents from the Midwestern US, bread and milk together are commonplace in a typical meal.  So perhaps this data from 'grocery' comes from another region of the world where milk and bread are less common to partake together in an average meal.
+  With a lift of 0.942117, it appears that "rolls/buns" and "whole milk" are substitute goods.  In truth, this does not make much sense to me since there is little reason these products would be substitutes in the real world.  One possible explanation would be from a food culture standpoint.  Personally, with parents from the Midwestern US, bread and milk together are commonplace in a typical meal.  So perhaps this data from 'grocery' comes from another region of the world where milk and bread are less common to partake together in an average meal.
 
 # Confidence
 
@@ -71,6 +72,8 @@ inspect(subset(groceryrules, lift < 1))
   
 ```{r groceryrules2, echo=FALSE}
 inspect(subset(groceryrules, confidence > 0.3))
+kable(inspect(subset(groceryrules, confidence > 0.3)))
 ```
 
   With the highest confidence level of 0.4036697, it appears that when consumers bought "butter" they also bought "whole milk" in the same transaction.  This would make sense, since many baking and cooking recipes call for these two ingredients.  The same can be said about the rule regarding "curd" and "whole milk."  Most of the other rules are in regard to vegetables being bought together with other vegetables, or vegetables being bought together with whole milk.
+
