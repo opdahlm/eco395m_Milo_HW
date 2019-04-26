@@ -59,7 +59,7 @@ inspect(subset(groceryrules, confidence > 0.3))
 
   First, I checked out any lifts that caught my attention. I decided to check for any substitute goods, that is any rule that have a lift < 1.  The following rules are what I found:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='asis'}
 inspect(subset(groceryrules, lift < 1))
 kable(inspect(subset(groceryrules, lift < 1)))
 ```
@@ -70,7 +70,7 @@ kable(inspect(subset(groceryrules, lift < 1)))
 
   Next, I checked out any interesting confidence levels.  For this, I simply wanted to see the highest confidence levels of rules, to see which goods were more likely to be bought together. What I found was the following:
   
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='asis'}
 inspect(subset(groceryrules, confidence > 0.3))
 kable(inspect(subset(groceryrules, confidence > 0.3)))
 ```
