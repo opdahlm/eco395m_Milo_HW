@@ -47,12 +47,9 @@ summary(gtrans)
 groceryrules = apriori(gtrans, 
 	parameter=list(support=.01, confidence=.1, maxlen=4))
 inspect(groceryrules)
-# Adjust support in order to find more rules.
-groceryrules2 = apriori(gtrans, 
-	parameter=list(support=.05, confidence=.1, maxlen=4))
 # Finding some interesting rules...
-inspect(subset(groceryrules2, lift < 1))
-inspect(subset(groceryrules2, confidence > 0.3))
+inspect(subset(groceryrules, lift < 1))
+inspect(subset(groceryrules, confidence > 0.3))
 ```
 
   By setting up an apriori algorithm for the 'grocery' dataset, I was able to find a couple of interesting rules.  
@@ -61,8 +58,8 @@ inspect(subset(groceryrules2, confidence > 0.3))
 
   First, I checked out any lifts that caught my attention. I decided to check for any substitute goods, that is any rule that have a lift < 1.  The following rules are what I found:
 
-```{r groceryrules2 lift, echo=TRUE}
-inspect(subset(groceryrules2, lift < 1))
+```{r groceryrules, echo=FALSE}
+inspect(subset(groceryrules, lift < 1))
 ```
 
   The first rule of note is between "shopping bags" and "soda".  With a lift of 0.9020198, these two goods are considered substitutes.  While "shopping bags" and "soda" are certainly not substitutable with one another, this perhaps makes sense when thinking in another approach.  Customers who purchase shopping bags may not want to purchase anything that will be heavy enough to rip the bags; therefore, assuming soda is sold in high quantities i.e. more than a single liter bottle, customers may not want to purchase heavy soda products that could jeopardize the integrity of their shopping bags.  
@@ -72,8 +69,8 @@ inspect(subset(groceryrules2, lift < 1))
 
   Next, I checked out any interesting confidence levels.  For this, I simply wanted to see the highest confidence levels of rules, to see which goods were more likely to be bought together. What I found was the following:
   
-```{r groceryrules2 confidence, echo=TRUE}
-inspect(subset(groceryrules2, confidence > 0.3))
+```{r groceryrules2, echo=FALSE}
+inspect(subset(groceryrules, confidence > 0.3))
 ```
 
-  With the highest confidence level of 0.4036697, it appears that when consumers bought "butter" they also bought "whole milk" in the same transaction.  This would make sense, since many baking and cooking recipes call for these two ingredients.  The same can be said about the rule regarding "curd" and "whole milk."  Most of the other rules are in regard to vegetables being bought together with other vegetables, which makes sense.  One other interestign rule is in row [9].  A 2-variable itemset, it reads that when "other vegetables" and "yogurt" are purchased together then "whole milk" will be purchased as well, with a confidence level of 0.3991770.
+  With the highest confidence level of 0.4036697, it appears that when consumers bought "butter" they also bought "whole milk" in the same transaction.  This would make sense, since many baking and cooking recipes call for these two ingredients.  The same can be said about the rule regarding "curd" and "whole milk."  Most of the other rules are in regard to vegetables being bought together with other vegetables, or vegetables being bought together with whole milk.
