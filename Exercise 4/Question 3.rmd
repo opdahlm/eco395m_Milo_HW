@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Association Rules for Grocery Purchases
 
-```{r grocery, include=FALSE, echo=FALSE}
+```{r, include=FALSE}
 library(arules)
 library(arulesViz)
 library(knitr)
@@ -59,7 +59,7 @@ inspect(subset(groceryrules, confidence > 0.3))
 
   First, I checked out any lifts that caught my attention. I decided to check for any substitute goods, that is any rule that have a lift < 1.  The following rules are what I found:
 
-```{r groceryrules, echo=FALSE}
+```{r, echo=FALSE}
 inspect(subset(groceryrules, lift < 1))
 kable(inspect(subset(groceryrules, lift < 1)))
 ```
@@ -70,10 +70,9 @@ kable(inspect(subset(groceryrules, lift < 1)))
 
   Next, I checked out any interesting confidence levels.  For this, I simply wanted to see the highest confidence levels of rules, to see which goods were more likely to be bought together. What I found was the following:
   
-```{r groceryrules2, echo=FALSE}
+```{r, echo=FALSE}
 inspect(subset(groceryrules, confidence > 0.3))
 kable(inspect(subset(groceryrules, confidence > 0.3)))
 ```
 
   With the highest confidence level of 0.4036697, it appears that when consumers bought "butter" they also bought "whole milk" in the same transaction.  This would make sense, since many baking and cooking recipes call for these two ingredients.  The same can be said about the rule regarding "curd" and "whole milk."  Most of the other rules are in regard to vegetables being bought together with other vegetables, or vegetables being bought together with whole milk.
-
